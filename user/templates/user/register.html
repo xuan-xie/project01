@@ -1,0 +1,30 @@
+{% extends 'user/login.html' %}
+{% block title %}
+    注册
+{% endblock %}
+{% block css_js %}
+ <style>
+    .fa{
+        top: -1px;
+        left: 20px;
+    }
+    </style>
+{% endblock %}
+
+{% block continer %}
+    <h3 class="form-title">Register</h3>
+                <form method="post" action="">
+                    {% csrf_token %}
+                    <div class="col-md-9">
+                    {% for foo in reg_form %}
+                         <div class="form-group">
+                         <i class="fa fa-user fa-lg"></i>
+                                {{ foo }}
+                        </div>
+                    {% endfor %}
+                    <div class="form-group col-md-offset-9">
+                        <button type="submit" class="btn btn-success pull-right" name="submit">注册</button>
+                    </div>
+                </div>
+
+{% endblock %}

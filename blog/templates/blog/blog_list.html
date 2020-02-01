@@ -1,0 +1,51 @@
+{% extends 'blog/blog_content.html' %}
+{% block title %}
+博客列表
+{% endblock %}
+{% block CSS %}
+    <style>
+    #title{
+        font-size: 28px;
+        padding: 0;
+    }
+    #theme{
+        padding: 0;
+        padding-left: 12px;
+        font-size: 16px;
+    }
+    </style>
+{% endblock %}
+{% block blog_content %}
+    <div class="col-sm-8 blog-main">
+
+          {% for blog in blogs %}
+              <div class="page-header">
+                <p id="blog_title"><a id="title" class="btn btn-outline-success " href="{% url 'blog_detail' blog.pk %}">{{ blog.title }}</a></p>
+              <p>主题<a id="theme" class="btn btn-outline-success btn-sm"  href="{% url 'blog_type' blog.blog_type.pk %}">{{ blog.blog_type.type_name }}</a> </p>
+                <p id="author">作者：{{ blog.author }} 时间：{{ blog.creat_time|date:"Y-m-d H:i:s" }}  阅读：({{ blog.get_read_num }}) </p>
+                <div id="content"> {{ blog.content|safe }}</div>
+              </div>
+          {% endfor %}
+
+         <nav aria-label="Page navigation">
+          <ul class="pagination">
+            <li>
+              <a href="#" aria-label="Previous">
+                <span aria-hidden="true">&laquo;</span>
+              </a>
+            </li>
+              {% for page in page_range %}
+              <li><a href="?page={{ page }}">{{ page }}</a></li>
+              {% endfor %}
+            <li>
+              <a href="#" aria-label="Next">
+                <span aria-hidden="true">&raquo;</span>
+              </a>
+            </li>
+          </ul>
+        </nav>
+    </div>
+{% endblock %}
+
+
+

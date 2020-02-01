@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<a href="{% url 'myaccount:profile_update' %}">Update Profile</a>
+<p>Welcome,{{ user.username }}</p>
+
+<h2>My Profile</h2>
+<ul>
+    <li>First Name:{{ user.first_name }}</li>
+    <li>Last Name:{{ user.last_name }}</li>
+    <li>Organization:{{ user.profile.org }}</li>
+    <li>Telephone:{{ user.profile.telephone }}</li>
+</ul>
+</body>
+</html>

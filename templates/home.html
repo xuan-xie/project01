@@ -1,0 +1,46 @@
+{% extends 'blog/base.html' %}
+{% load staticfiles %}
+    {% block content %}
+        <div id="Blog"><p>欢迎来到我的博客</p></div>
+
+
+        <script src="http://cdn.highcharts.com.cn/highcharts/highcharts.js"></script>
+         <div id="container" style="width: 600px;height:400px; margin: 0 auto;"></div>
+        <script>
+            // JS 代码
+
+        var options = {
+            chart: {
+                type: 'line'                          //指定图表的类型，默认是折线图（line）
+            },
+            title: {
+                text: '7天内阅读统计'                 // 标题
+            },
+            xAxis: {
+                categories: {{ week|safe }}   // x 轴分类
+            },
+            yAxis: {
+              // y 轴标题
+                title: null,
+                Labels:false,
+                gridLineDashStyle:'Dash'
+            },
+            series: [{                              // 数据列
+                name: '阅读统计',                        // 数据列名
+                data: {{ read_nums }}                    // 数据
+            },],
+            credits:{
+             enabled: false // 禁用版权信息
+            },
+            plotOptions: {
+            line: {
+            dataLabels: {
+            enabled: true
+                        }
+                }
+            }
+        };
+        // 图表初始化函数
+        var chart = Highcharts.chart('container', options);
+        </script>
+    {% endblock %}

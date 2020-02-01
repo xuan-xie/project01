@@ -1,0 +1,116 @@
+{% extends 'blog/base.html' %}
+{% load staticfiles %}
+{% block title %}
+博客列表
+{% endblock %}
+{% block CSS %}
+<script src ="{% static 'ckeditor/ckeditor-init.js' %}"> </script>
+<script src ="{% static 'ckeditor/ckeditor/ckeditor.js' %}"> </script>
+{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+    {% block blog_content %}
+        <div class="col-sm-8 blog-main">
+            <h1>{{ blog.title }}</h1>
+            <h4>阅读 ({{ blog.get_read_num}})</h4>
+            <h4>{{ blog.author }} {{ blog.creat_time }}</h4>
+            {{ blog.content|safe }}
+            {% if user.is_authenticated %}
+            <form id="comment-form" class="comment-form" action="{% url 'comment:update_comment' %}" method="post">
+                <p style="color: aquamarine">开始评论</p>
+                {% csrf_token %}
+                {% for form in comment_form %}
+                {{ form }}
+                {% endfor %}
+                <br>
+                <input class="btn pull-right btn-primary" type="submit"  value="评论" >
+                 <span id="comment-error" class="text-danger pull-left"></span>
+            </form>
+        </div>
+{% else %}
+
+        <div class="col-sm-8 blog-main">
+        <h5 class="pull-left">登陆之后方可评论，请登录或注册</h5>
+            <br>
+            <a class="btn btn-outline-success btn-danger pull-left" href="{% url 'register'%}?from={{ request.get_full_path }}">注册</a>
+            <h4 class="pull-left">or</h4>
+            <a class="btn btn-outline-success btn-primary pull-left" href="{% url 'login'%}?from={{ request.get_full_path }}">登录</a>
+        </div>
+        </div>
+{% endif %}
+        {% endblock %}
+        <div class="col-sm-3 col-sm-offset-1 blog-sidebar">
+              <div class="sidebar-module sidebar-module-inset">
+              </div>
+              <div class="sidebar-module">
+                <ol class="list-unstyled">
+                </ol>
+              </div>
+              <div class="sidebar-module">
+                <h4>博客分类</h4>
+                <ol class="list-unstyled">
+                    {% for blogtype in blogtypes %}
+                    <li><a href="{% url 'blog_type' blogtype.pk %}">{{blogtype}}</a></li>
+                    {% endfor %}
+                </ol>
+              </div>
+        </div>
+
+</div>
+    <div id="comment-list">
+    <h3>评论列表</h3>
+    {% for comment in comments %}
+      <div style="color: #2aabd2"> {{ user.username }} ({{ comment.comment_time|date:"Y-m-d H:i:s" }}):</div>
+    <p>{{ comment|safe }}</p>
+    {% empty %}
+        暂无评论
+    {% endfor %}
+    </div>
+{% endblock %}
+
+{% block extens_js %}
+    <script type="text/javascript">
+    $("#comment-form").submit(function () {
+         $("#comment-error").text('');
+            if(CKEDITOR.instances["id_text"].document.getBody().getText().trim()==''){
+                $("#comment_error").text('评论内容不能为空');
+                return false;
+            }
+
+            // 更新数据到textarea
+            CKEDITOR.instances['id_text'].updateElement();
+
+         $.ajax(
+        {
+            data: $(this).serialize(),
+            url:'{% url 'comment:update_comment' %}',
+            type:'POST',
+            cache:false,
+            success:function (data) {
+                console.log(data);
+                if (data['status'] === 'SUCCESS'){
+                    var comment_html = '<div style="color: #2aabd2">' + data['username'] +
+                                           ' (' + data['comment_time'] + ')：'  + '</div>'+
+                                           data['text'];
+                        $("#comment-list").prepend(comment_html);
+                        // 清空编辑框的内容
+                        CKEDITOR.instances['id_text'].setData('');
+                }
+
+                else{
+                console.log('没跳转');
+            }
+
+            }})
+         return false;
+    })
+
+
+
+    </script>
+{% endblock %}
+
+
+
+
